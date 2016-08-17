@@ -5,6 +5,7 @@
 #include <array>
 #include <chrono>
 #include <thread>
+#include <functional>
 
 #include <wiringPiI2C.h>
 
@@ -31,16 +32,24 @@ int16_t readWord(int device, int reg)
     return highByte << 8 | lowByte;
 }
 
-int16_t calcOffset(int device, int sensorReg, int trials = 20)
+Vector3<int16_t> calcSensorOffset(int device, std::function<Vector3<int16_t>(int)> sensorAccessFunc, int trials = 20)
 {
     assert(trials > 0);
 
-    int total = 0;
+    Vector3<int16_t> offsets;
     for(int i = 0; i < trials; i++)
-        total += readWord(device, sensorReg);
+    {
+        auto data = sensorAccessFunc(device);
+        offsets.x += data.x;
+        offsets.y += data.y;
+        offsets.z += data.z;
+    }
 
-    int offset = total /= trials;
-    return offset;    
+    offsets.x /= trials;
+    offsets.y /= trials;
+    offsets.z /= trials;
+
+    return offsets;    
 }
 
 /**
@@ -106,37 +115,29 @@ int main()
     wiringPiI2CWriteReg8(device, 28, 12);
     // wiringPiI2CWriteReg8(device, 30, 11);
 
-     
-    // Calculuate the offsets for the accelerometer
-    // assuming it is level with the horizon
-    Vector3<int16_t> accelOffsets; 
-    accelOffsets.x = calcOffset(device, 59);
-    accelOffsets.y = calcOffset(device, 61);
-    accelOffsets.z = calcOffset(device, 63);
+    // Calculuate the sensor offsets assuming there is no
+    // acceleration or rotation
+    Vector3<int16_t> accelOffsets = calcSensorOffset(device, getRawAccelData); 
+    Vector3<int16_t> gyroOffsets = calcSensorOffset(device, getRawGyroData);
 
-    // Calculuate the offsets for the gyroscope
-    // assuming there is no rotation
-    Vector3<int16_t> gyroOffsets;
-    gyroOffsets.x = calcOffset(device, 67);
-    gyroOffsets.y = calcOffset(device, 69);
-    gyroOffsets.z = calcOffset(device, 71);
-
-    // std::cout << accelOffsets.z / AccelSenFactor16G << std::endl;
-
-    // Display some measurements from the IMU 
+    // Display some measurements from the gyroscope
+    std::cout << "Gyroscope" << std::endl;
     for(int i = 0; i < 10; i++)
     {
         // The x, y, and z axes are offseted to zero degrees/sec
         Vector3<int16_t> gyroData = getRawGyroData(device);
-        std::cout << "Gyroscope" << std::endl;
         std::cout << "X: " << (gyroData.x - gyroOffsets.x) / GyroSenFactor250 << ", "
                   << "Y: " << (gyroData.y - gyroOffsets.y) / GyroSenFactor250 << ", "
                   << "Z: " << (gyroData.z - gyroOffsets.z) / GyroSenFactor250 << std::endl;
+    }
 
+    // Display some measurements from the accelerometer
+    std::cout << "Accelerometer" << std::endl;
+    for(int i = 0; i < 10; i++)
+    {
         // The x and y axes are offseted to zero g's
         // The z axis (vertical axis) is offseted to 1g because there is always gravity
         Vector3<int16_t> accelData = getRawAccelData(device);
-        std::cout << "Accelerometer" << std::endl;
         std::cout << "X: " << ( accelData.x - accelOffsets.x ) / AccelSenFactor16G << ", "
                   << "Y: " << ( accelData.y - accelOffsets.y ) / AccelSenFactor16G << ", "
                   << "Z: " << ( accelData.z) / AccelSenFactor16G << std::endl;
