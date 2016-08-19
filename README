@@ -1,1 +1,7 @@
-Uses wiringPi version 2.31 for I2C access.
+C++ wiringPi drivers for the MPU-9255 9dof IMU. Uses wiringPi version 2.31 for I2C access 
+(see wiringpi.com/download-and-install/ for installation instructions). 
+
+Compile and run with:
+
+g++ drivers.cpp -lwiringPi -std=c++11 -o drivers
+./drivers
