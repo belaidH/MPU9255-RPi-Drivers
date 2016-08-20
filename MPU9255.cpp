@@ -62,8 +62,6 @@ MPU9255::MPU9255()
 
     // Calculate the accelerometer and gyroscope 
     mGyroOffsets = calcSensorOffset(std::bind(&MPU9255::getRawGyroData, this));
-    std::cout << mGyroOffsets.x << ", " << mGyroOffsets.y << ", " << mGyroOffsets.z << std::endl;
-
     mAccelOffsets = calcSensorOffset(std::bind(&MPU9255::getRawAccelData, this));
 
     // My default the accelerometer and gyroscope are set 
@@ -98,6 +96,7 @@ Vector3<double> MPU9255::getAccelerations() const
     accelerations.x = rawRates.x / mAccelSenFactor;
     accelerations.y = rawRates.y / mAccelSenFactor;
     accelerations.z = rawRates.z / mAccelSenFactor;
+    accelerations.z += 1.0;     // Account for the constant 1g of gravity
  
     return accelerations;
 }
