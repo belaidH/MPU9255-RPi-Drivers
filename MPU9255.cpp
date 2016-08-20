@@ -1,6 +1,7 @@
 #include <MPU9255.hpp>
 #include <wiringPiI2C.h>
 #include <cassert>
+#include <vector>
 #include <iostream>
 
 #include <I2CUtil.hpp>
@@ -30,7 +31,7 @@ namespace GyroSenFactor
 * @param sensorAccessFunc The function that returns the sensor values
 * @param trials The number of samples to average
 */
-Vector3<int16_t> calcSensorOffset(std::function<Vector3<int16_t>()> sensorAccessFunc, int trials = 20)
+Vector3<int16_t> calcSensorOffset(std::function<Vector3<int16_t>()> sensorAccessFunc, int trials = 5)
 {
     assert(trials > 0);
 
@@ -41,6 +42,7 @@ Vector3<int16_t> calcSensorOffset(std::function<Vector3<int16_t>()> sensorAccess
         offsets.x += data.x;
         offsets.y += data.y;
         offsets.z += data.z;
+        std::cout << data.z << std::endl;
     }
 
     offsets.x /= trials;
@@ -68,6 +70,10 @@ MPU9255::MPU9255()
     // to measure in the +/- 2g and +/- 250 deg/s range
     mAccelSenFactor = AccelSenFactors::g2;
     mGyroSenFactor = GyroSenFactor::ds250;
+
+    auto data = getRawGyroData();
+    std::cout << mGyroOffsets.x << ", " << mGyroOffsets.y << ", " << mGyroOffsets.z << std::endl;
+    std::cout << data.x << ", " << data.y << ", " << data.z << std::endl;
 }
 
 Vector3<double> MPU9255::getRotationRates() const

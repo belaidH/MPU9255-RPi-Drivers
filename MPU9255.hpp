@@ -9,6 +9,46 @@ struct Vector3
     T x;        // Left is positive, right is negative
     T y;        // Back is positive, front is negative 
     T z;        // Up is positive  , down is negative
+    
+    Vector3 operator+(Vector3& rhs)
+    {
+        Vector3 v;
+        v.x = x + rhs.x;
+        v.y = y + rhs.y;
+        v.z = z + rhs.z;
+
+        return v;
+    }
+
+    Vector3 operator-(Vector3& rhs)
+    {
+        Vector3 v;
+        v.x = x - rhs.x;
+        v.y = y - rhs.y;
+        v.z = z - rhs.z;
+
+        return v;
+    }
+
+    Vector3 operator*(const T& rhs)
+    {
+        Vector3 v;
+        v.x = x * rhs;
+        v.y = y * rhs;
+        v.z = z * rhs;
+
+        return v;
+    }
+
+    Vector3 operator/(const T& rhs)
+    {
+        Vector3 v;
+        v.x = x / rhs;
+        v.y = y / rhs;
+        v.z = z / rhs;
+
+        return v;
+    }
 };
 
 class MPU9255
