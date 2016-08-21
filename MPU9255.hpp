@@ -20,6 +20,11 @@ struct Vector3
         return v;
     }
 
+    void operator+=(Vector3& rhs)
+    {
+        *this = *this + rhs;
+    }
+
     Vector3 operator-(Vector3& rhs)
     {
         Vector3 v;
@@ -28,6 +33,11 @@ struct Vector3
         v.z = z - rhs.z;
 
         return v;
+    }
+
+    void operator-=(Vector3& rhs)
+    {
+        *this = *this - rhs;
     }
 
     Vector3 operator*(const T& rhs)
@@ -48,6 +58,11 @@ struct Vector3
         v.z = z / rhs;
 
         return v;
+    }
+
+    void operator/=(const T& rhs)
+    {
+        *this = *this / rhs;
     }
 };
 
