@@ -10,7 +10,7 @@ struct Vector3
     T y;        // Back is positive, front is negative 
     T z;        // Up is positive  , down is negative
     
-    Vector3 operator+(Vector3& rhs)
+    Vector3 operator+(Vector3 rhs)
     {
         Vector3 v;
         v.x = x + rhs.x;
@@ -20,12 +20,12 @@ struct Vector3
         return v;
     }
 
-    void operator+=(Vector3& rhs)
+    void operator+=(Vector3<T> rhs)
     {
         *this = *this + rhs;
     }
 
-    Vector3 operator-(Vector3& rhs)
+    Vector3 operator-(Vector3 rhs)
     {
         Vector3 v;
         v.x = x - rhs.x;
@@ -35,12 +35,12 @@ struct Vector3
         return v;
     }
 
-    void operator-=(Vector3& rhs)
+    void operator-=(Vector3 rhs)
     {
         *this = *this - rhs;
     }
 
-    Vector3 operator*(const T& rhs)
+    Vector3 operator*(T rhs)
     {
         Vector3 v;
         v.x = x * rhs;
@@ -50,7 +50,7 @@ struct Vector3
         return v;
     }
 
-    Vector3 operator/(const T& rhs)
+    Vector3 operator/(T rhs)
     {
         Vector3 v;
         v.x = x / rhs;
@@ -60,9 +60,17 @@ struct Vector3
         return v;
     }
 
-    void operator/=(const T& rhs)
+    void operator/=(T rhs)
     {
         *this = *this / rhs;
+    }
+
+    template<typename H>
+    void operator=(Vector3<H> rhs)
+    {
+        this->x = static_cast<T>(rhs.x);
+        this->y = static_cast<T>(rhs.y);
+        this->z = static_cast<T>(rhs.z);
     }
 };
 
