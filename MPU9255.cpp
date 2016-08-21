@@ -37,18 +37,9 @@ Vector3<int16_t> calcSensorOffset(std::function<Vector3<int16_t>()> sensorAccess
 
     Vector3<int16_t> offsets;
     for(int i = 0; i < trials; i++)
-    {
-        auto data = sensorAccessFunc();
-        offsets.x += data.x;
-        offsets.y += data.y;
-        offsets.z += data.z;
-        std::cout << data.z << std::endl;
-    }
+        offsets += sensorAccessFunc();
 
-    offsets.x /= trials;
-    offsets.y /= trials;
-    offsets.z /= trials;
-
+    offsets /= trials;
     return offsets;    
 }
 
@@ -72,21 +63,16 @@ MPU9255::MPU9255()
     mGyroSenFactor = GyroSenFactor::ds250;
 
     auto data = getRawGyroData();
-    std::cout << mGyroOffsets.x << ", " << mGyroOffsets.y << ", " << mGyroOffsets.z << std::endl;
-    std::cout << data.x << ", " << data.y << ", " << data.z << std::endl;
 }
 
 Vector3<double> MPU9255::getRotationRates() const
 {
     auto rawRates = getRawGyroData();
-    rawRates.x -= mGyroOffsets.x;
-    rawRates.y -= mGyroOffsets.y;
-    rawRates.z -= mGyroOffsets.z;
+    rawRates -= mGyroOffsets;
 
     Vector3<double> rotationRates;
-    rotationRates.x = rawRates.x / mGyroSenFactor;
-    rotationRates.y = rawRates.y / mGyroSenFactor;
-    rotationRates.z = rawRates.z / mGyroSenFactor;
+    rotationRates = rawRates;
+    rotationRates /= mGyroSenFactor;
 
     return rotationRates;
 }
@@ -94,14 +80,11 @@ Vector3<double> MPU9255::getRotationRates() const
 Vector3<double> MPU9255::getAccelerations() const
 {
     auto rawRates = getRawAccelData();
-    rawRates.x -= mAccelOffsets.x;
-    rawRates.y -= mAccelOffsets.y;
-    rawRates.z -= mAccelOffsets.z;
+    rawRates -= mAccelOffsets;
     
     Vector3<double> accelerations;
-    accelerations.x = rawRates.x / mAccelSenFactor;
-    accelerations.y = rawRates.y / mAccelSenFactor;
-    accelerations.z = rawRates.z / mAccelSenFactor;
+    accelerations = rawRates;
+    accelerations /= mAccelSenFactor;
     accelerations.z += 1.0;     // Account for the constant 1g of gravity
  
     return accelerations;
