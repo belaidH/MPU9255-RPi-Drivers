@@ -3,6 +3,8 @@
 
 #include <functional>
 
+// Utility class used as a convenient way to store values that
+// exits in three axes
 template<typename T>
 struct Vector3
 {

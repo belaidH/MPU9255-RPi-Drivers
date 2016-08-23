@@ -44,6 +44,10 @@ Vector3<int16_t> calcSensorOffset(std::function<Vector3<int16_t>()> sensorAccess
     return offsets;    
 }
 
+/**
+* @brief Setup device and calculate sensor offsets
+*
+*/
 MPU9255::MPU9255()
 {
     // Setup IMU
@@ -64,6 +68,11 @@ MPU9255::MPU9255()
     mGyroSenFactor = GyroSenFactor::ds250;
 }
 
+/**
+* @brief Get the angular velocities
+*
+* @return The angular velocities in 3 axes in degrees/sec as a vector
+*/
 Vector3<double> MPU9255::getRotationRates() const
 {
     auto rawRates = getRawGyroData();
@@ -76,6 +85,11 @@ Vector3<double> MPU9255::getRotationRates() const
     return rotationRates;
 }
 
+/**
+* @brief Get the accelerations
+*
+* @return The angular accelerations in 3 axes in units of g's as a vector
+*/
 Vector3<double> MPU9255::getAccelerations() const
 {
     auto rawRates = getRawAccelData();
