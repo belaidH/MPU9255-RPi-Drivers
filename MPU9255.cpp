@@ -28,6 +28,7 @@ namespace GyroSenFactor
 
 /**
 * @brief Calculate the average sensor value over trials for use as a sensor offset
+*
 * @param sensorAccessFunc The function that returns the sensor values
 * @param trials The number of samples to average
 */
@@ -61,8 +62,6 @@ MPU9255::MPU9255()
     // to measure in the +/- 2g and +/- 250 deg/s range
     mAccelSenFactor = AccelSenFactors::g2;
     mGyroSenFactor = GyroSenFactor::ds250;
-
-    auto data = getRawGyroData();
 }
 
 Vector3<double> MPU9255::getRotationRates() const
